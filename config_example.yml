@@ -1,0 +1,84 @@
+---
+user: xlogin00
+password: tvoja_mama
+videos:
+    # 1. semester
+    # IDA
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1304"
+    dir_path: "/mnt/storage/VUT/1_semester/ida/videos"
+    video_type: board
+    # IEL
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1315"
+    dir_path: "/mnt/storage/VUT/1_semester/iel/videos"
+    video_type: board
+    # 2. semester
+    # IMA
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1371"
+    dir_path: "/mnt/storage/VUT/2_semester/ima/videos"
+    video_type: board
+    # INC
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1382"
+    dir_path: "/mnt/storage/VUT/2_semester/inc/videos"
+    video_type: board
+    # IOS
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1355"
+    dir_path: "/mnt/storage/VUT/2_semester/ios/videos"
+    video_type: board
+    # IVH
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1355"
+    dir_path: "/mnt/storage/VUT/2_semester/ivh/videos"
+    video_type: board
+    # 3. semester
+    # IAL
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1425"
+    dir_path: "/mnt/storage/VUT/3_semester/ial/videos"
+    video_type: board
+    # IFJ
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1435"
+    dir_path: "/mnt/storage/VUT/3_semester/ifj/videos"
+    video_type: board
+    # INP
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1424"
+    dir_path: "/mnt/storage/VUT/3_semester/inp/videos"
+    video_type: board
+    # ISS
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1430"
+    dir_path: "/mnt/storage/VUT/3_semester/iss/videos"
+    video_type: board
+    # 4. semester
+    # IDS
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1477"
+    dir_path: "/mnt/storage/VUT/4_semester/ids/videos"
+    video_type: board
+    # IPK
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1484"
+    dir_path: "/mnt/storage/VUT/4_semester/ipk/videos"
+    video_type: board
+    # IPP
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1485"
+    dir_path: "/mnt/storage/VUT/4_semester/ipp/videos"
+    video_type: board
+    # 5. semester - recording was turn off
+    # 6. semester
+    # IZG
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1544"
+    dir_path: "/mnt/storage/VUT/6_semester/izg/videos"
+    video_type: board
+    # ITW
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1538"
+    dir_path: "/mnt/storage/VUT/6_semester/itw/videos"
+    video_type: board
+    # ITY
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1539"
+    dir_path: "/mnt/storage/VUT/6_semester/ity/videos"
+    video_type: board
+    # 7. semester
+    # IMS
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1585"
+    dir_path: "/mnt/storage/VUT/7_semester/ims/videos"
+    video_type: board
+    # ISA
+  - url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1587"
+    dir_path: "/mnt/storage/VUT/7_semester/isa/videos"
+    video_type: board
+    # 7. semester - BW

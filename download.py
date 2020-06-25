@@ -25,29 +25,37 @@ class Downloader:
         'both': re.compile(r'^(?:přednáška|demonstrační cvičení).*')
     }
 
-    def __init__(self):
+    def __init__(self, user='', password='', video_url='', video_dir_path='', video_type='', one_video_per_day=False):
         """Init function.
 
         Define important instance arguments.
         """
         # WIS username like 'xlogin00'.
-        self._user = ''
+        self._user = user
         # WIS password.
-        self._password = ''
+        self._password = password
         # URL of video list for course in specific semester.
         # Example: self._video_url = 'https://video1.fit.vutbr.cz/av/records-categ.php?id=1315'
-        self._video_url = ''
+        self._video_url = video_url
+        # Path where should be downloaded videos stored.
+        self._video_dir_path = video_dir_path
         # Which type of video should be downloaded.
         # Example: self._video_type = 'board'
-        self._video_type = ''
-        # Path where should be downloaded videos stored.
-        self._video_dir_path = ''
+        self._video_type = video_type
+        # In case that in one day were more courses for different student groups.
+        self._one_video_per_day = one_video_per_day
         # Create session with shared cookies.
         self._session = requests.Session()
         # If the option "--one-video-per-day" is chosen, this set is used to store days, from which is video downloaded.
         self._unique_days = set()
 
-        # Disable warnings about missing certificates.
+        # If all mandatory args from argument parser are set by init function, disable program argument parsing.
+        if all([user, password, video_url, video_dir_path]):
+            self._disable_argparse = True
+        else:
+            self._disable_argparse = False
+
+        # Disable warnings about missing certificates. Missing correct ssl implementation.
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     def _parse_args(self):
@@ -85,6 +93,7 @@ class Downloader:
 
         :param url: URL of the downloaded file.
         :param file_path: Full path to the video file.
+        :return: 0 when download process was successful else 1
         """
         # NOTE the stream=True parameter below
         with self._session.get(url, headers=self.HEADERS, verify=False, stream=True) as file_query:
@@ -105,18 +114,13 @@ class Downloader:
             #   'Content-Type': 'video/mp4'}
             if 'Content-Disposition' not in file_query.headers:
                 print('Dosažen limit stahování záznamů.')
-                return
+                return 1
             # Stole the file extension from original name of the video.
             # Example:
             # file_query.headers['Content-Disposition'] = 'attachment; filename="IEL_2016-09-29.mp4"'
             # file_path = '/home/user/Documents/iel/iel_29-9-2016_08:00-09:55_prednaska' ->
             # file_name = '/home/user/Documents/iel/iel_29-9-2016_08:00-09:55_prednaska.mp4'
             file_path = file_path + '.' + file_query.headers['Content-Disposition'].split('"')[1].split('.')[1]
-
-            # If the file exists, skip downloading.
-            if os.path.exists(file_path):
-                print('Soubor s videem existuje, přeskakuji.')
-                return
 
             file_query.raise_for_status()
             with open(file_path, 'wb') as big_file:
@@ -126,11 +130,16 @@ class Downloader:
                     # if chunk:
                     big_file.write(chunk)
 
+        return 0
+
     def _download(self):
         """Core of the downloader.
 
         Parse HTML pages and download videos from collected addresses.
         """
+        # Here is stored number of videos which were not downloaded due to downloading limits.
+        missing_videos_count = 0
+
         # Get cookie 'cosign' with some session hash which is saved after visiting cas.fit.vutbr.cz.
         self._session.get(self.LOGIN_PAGE_URL, headers=self.HEADERS)
 
@@ -148,6 +157,10 @@ class Downloader:
         # successful.
         if BeautifulSoup(login_query.text, 'lxml').find_all('h1')[0].text != 'Aplikace autentizované CAS FIT VUT':
             raise ValueError('Authentication failure.')
+
+        # List of existing files before downloading. File extension are appended after video file requests so files in
+        # list are without an file extension.
+        existing_files = [file.split('.')[0] for file in os.listdir(self._video_dir_path)]
 
         # Display private content of specific course and semester.
         video_query = self._session.get(self._video_url, headers=self.HEADERS, verify=False)
@@ -195,6 +208,9 @@ class Downloader:
                 # Example: video_name = 'iel_29-9-2016_08:00-09:55_prednaska'
                 video_name = '{}_{}_{}_{}'.format(modified_video_info['course'], modified_video_info['date'],
                                                   modified_video_info['time_range'], modified_video_info['type'])
+                # Name of file with full path to video directory.
+                # Example: video_path = '/home/user/Documents/iel/videos/iel_29-9-2016_08:00-09:55_prednaska'
+                video_path = os.path.join(self._video_dir_path, video_name)
 
                 # If "--one-video-per-day" program argument is used.
                 if self._one_video_per_day and modified_video_info['date'] in self._unique_days:
@@ -209,31 +225,42 @@ class Downloader:
 
                 # Store date.
                 self._unique_days.add(modified_video_info['date'])
-                # Download the video.
-                self._download_video(video_url, os.path.join(self._video_dir_path, video_name))
+
+                # Check if the video file exists.
+                if video_name in existing_files:
+                    print('Soubor s videem existuje, přeskakuji.\n')
+                    continue
+
+                # Download the video. If video was not downloaded, increase missing videos counter.
+                missing_videos_count += self._download_video(video_url, os.path.join(self._video_dir_path, video_name))
 
                 # Separate video logs.
                 print()
 
-        return 0
+        return missing_videos_count
 
     def run(self):
         """Main public method.
 
-        :return: Unix-like return code. If all is ok, return 0, in case of big error return 1.
+        :return: When something was wrong, return -1 else count of video files which were not dowloaded due to
+        downloading limits.
         """
         # Parse program arguments.
-        self._parse_args()
+        if not self._disable_argparse:
+            self._parse_args()
 
         # Run downloading.
         try:
-            self._download()
+            return self._download()
         except ValueError:
-            return 1
-
-        return 0
+            return -1
 
 
 if __name__ == "__main__":
     # Run downloader.
-    exit(Downloader().run())
+    rc = Downloader().run()
+
+    if rc == -1:
+        exit(1)
+    else:
+        exit(0)

@@ -1,0 +1,16 @@
+---
+# WIS username like "xlogin00". Mandatory option.
+#user: xlogin00
+# WIS password. Mandatory option.
+#password: secret
+# Courses definition. In YAML item of array starts with dash, so these parameters can be filled multiple times.
+#videos:
+     # URL of video list for course in specific semester. Mandatory option.
+  #- url: "https://video1.fit.vutbr.cz/av/records-categ.php?id=1315"
+     # Path to the dir where should be videos stored. Mandatory option.
+  #  dir_path: "/home/user/Documents/iel"
+     # Which type of video should be downloaded. Videos are captured in two version, first with full view to a teacher
+     # and bad shot of board and second only with view to a board. Mandatory option.
+  #  video_type: board
+     # Course can be run more than once per day with same content. With this option you can skip it.
+  #  one_video_per_day: false
